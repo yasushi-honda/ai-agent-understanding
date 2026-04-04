@@ -33,6 +33,15 @@ AIエージェントホスト
 | Claude Codeスキル | `/skill` で呼び出し |
 | サブエージェント | Agent Teamsから利用 |
 
+## 2026年4月の現状
+- **月間SDK DL数**: 9,700万（Python + TypeScript合計）
+- **採用**: Anthropic, OpenAI, Google, Microsoft, Amazon（全主要AI企業）
+- **利用可能サーバー**: 5,000+
+- **ガバナンス**: Linux Foundation AAIF（Agentic AI Foundation）
+- **推奨トランスポート**: Streamable HTTP（本番）、stdio（ローカル）
+- **認証標準**: OAuth 2.1
+- **補完プロトコル**: A2A（Agent-to-Agent、Google提唱）— MCPがツール接続、A2Aがエージェント間協調
+
 ## 関連図解
 - [MCPが支えるFunction Callingアーキテクチャ](../diagrams/architecture/mcp-function-calling-architecture.png)
 - [MCPサーバー自動生成フロー](../diagrams/architecture/mcp-server-generation-flow.png)
