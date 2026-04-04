@@ -295,6 +295,48 @@
             .flow-block::after { display: none !important; }
             .stats { grid-template-columns: 1fr 1fr; }
         }
+
+        /* --- Lightbox (#7) --- */
+        .lightbox-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .lightbox-overlay.active { display: flex; }
+        .lightbox-overlay img {
+            max-width: 90vw;
+            max-height: 90vh;
+            border-radius: 8px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+            cursor: default;
+            object-fit: contain;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            color: white;
+            font-size: 2rem;
+            line-height: 1;
+            cursor: pointer;
+            background: none;
+            border: none;
+            opacity: 0.8;
+        }
+        .lightbox-close:hover { opacity: 1; }
+        .diagram-item img { cursor: zoom-in; }
+        @media (max-width: 768px) {
+            .lightbox-overlay img { max-width: 95vw; max-height: 80vh; }
+        }
+        @media (max-width: 480px) {
+            .lightbox-overlay img { max-width: 98vw; max-height: 70vh; }
+        }
+        /* --- /Lightbox --- */
     </style>
 </head>
 <body>
@@ -601,5 +643,43 @@
     </p>
 </footer>
 
+<!-- Lightbox overlay -->
+<div class="lightbox-overlay" id="lightboxOverlay" role="dialog" aria-label="画像拡大表示">
+    <button class="lightbox-close" id="lightboxClose" aria-label="閉じる">&times;</button>
+    <img id="lightboxImg" src="" alt="">
+</div>
+
+<script>
+// --- Lightbox (#7) ---
+(function () {
+    var overlay = document.getElementById('lightboxOverlay');
+    var img = document.getElementById('lightboxImg');
+
+    function open(src, alt) {
+        img.src = src;
+        img.alt = alt || '';
+        overlay.classList.add('active');
+    }
+    function close() {
+        overlay.classList.remove('active');
+        img.src = '';
+    }
+
+    document.querySelectorAll('.diagram-item img').forEach(function (el) {
+        el.addEventListener('click', function () { open(el.src, el.alt); });
+    });
+
+    document.getElementById('lightboxClose').addEventListener('click', function (e) {
+        e.stopPropagation();
+        close();
+    });
+    overlay.addEventListener('click', close);
+    img.addEventListener('click', function (e) { e.stopPropagation(); });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') close();
+    });
+}());
+// --- /Lightbox ---
+</script>
 </body>
 </html>
