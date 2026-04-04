@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIエージェント理解 - 研究ワークスペース</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --accent-green: #10b981;
+            --accent-purple: #8b5cf6;
+            --accent-orange: #f59e0b;
+            --accent-pink: #ec4899;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #7c3aed 100%);
+            color: white;
+            padding: 4rem 2rem 3rem;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+        .hero-badges {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Section */
+        section {
+            padding: 3rem 0;
+        }
+        section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        /* Flow Diagram */
+        .flow-section {
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+        .flow-blocks {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+            align-items: stretch;
+            margin-top: 1.5rem;
+        }
+        .flow-block {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            border-radius: 12px;
+            position: relative;
+        }
+        .flow-block:not(:last-child)::after {
+            content: '\u2192';
+            position: absolute;
+            right: -0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: var(--text-light);
+            z-index: 1;
+        }
+        .flow-block h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .flow-block p { font-size: 0.85rem; opacity: 0.8; }
+        .flow-block .emoji { font-size: 2rem; margin-bottom: 0.5rem; }
+        .fb-1 { background: #eff6ff; border: 2px solid #93c5fd; }
+        .fb-2 { background: #f0fdf4; border: 2px solid #86efac; }
+        .fb-3 { background: #fef3c7; border: 2px solid #fcd34d; }
+        .fb-4 { background: #faf5ff; border: 2px solid #c4b5fd; }
+
+        /* Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--primary);
+            transition: transform 0.2s;
+        }
+        .card:hover { transform: translateY(-3px); }
+        .card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+        }
+        .card p, .card li {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        .card ul { padding-left: 1.2rem; }
+        .card ul li { margin-bottom: 0.3rem; }
+
+        .card-green { border-left-color: var(--accent-green); }
+        .card-green h3 { color: #059669; }
+        .card-purple { border-left-color: var(--accent-purple); }
+        .card-purple h3 { color: #7c3aed; }
+        .card-orange { border-left-color: var(--accent-orange); }
+        .card-orange h3 { color: #d97706; }
+        .card-pink { border-left-color: var(--accent-pink); }
+        .card-pink h3 { color: #db2777; }
+
+        /* Diagrams */
+        .diagram-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .diagram-item {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+        .diagram-item:hover { transform: translateY(-3px); }
+        .diagram-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .diagram-item .caption {
+            padding: 1rem 1.2rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text);
+            border-top: 1px solid var(--border);
+        }
+        .diagram-item .caption span {
+            display: block;
+            font-weight: 400;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 0.3rem;
+        }
+
+        /* Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+        }
+        .comparison-table th {
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+        .comparison-table td {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+        .comparison-table tr:last-child td { border-bottom: none; }
+        .comparison-table tr:hover td { background: #f1f5f9; }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .stat {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+        }
+        .stat .number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        .stat .label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.3rem;
+        }
+
+        /* Best Practices */
+        .bp-list {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .bp-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+        .bp-number {
+            background: var(--primary);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .bp-content h4 { margin-bottom: 0.3rem; }
+        .bp-content p { font-size: 0.9rem; color: var(--text-light); }
+
+        /* Footer */
+        footer {
+            background: #1e293b;
+            color: #94a3b8;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+        footer a { color: #93c5fd; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 1.8rem; }
+            .flow-blocks { grid-template-columns: 1fr 1fr; }
+            .flow-block:nth-child(2)::after { display: none; }
+            .stats { grid-template-columns: repeat(2, 1fr); }
+            .diagram-gallery { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 480px) {
+            .flow-blocks { grid-template-columns: 1fr; }
+            .flow-block::after { display: none !important; }
+            .stats { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Hero -->
+<header class="hero">
+    <h1>AIエージェント理解</h1>
+    <p>MCP / Function Calling / エージェントパターンの知識整理と実践環境</p>
+    <div class="hero-badges">
+        <span class="badge">Claude Code</span>
+        <span class="badge">MCP</span>
+        <span class="badge">Function Calling</span>
+        <span class="badge">GCP</span>
+        <span class="badge">2026-04 Updated</span>
+    </div>
+</header>
+
+<div class="container">
+
+    <!-- Core Flow -->
+    <section>
+        <h2>核心フロー</h2>
+        <div class="flow-section">
+            <p style="text-align:center; color: var(--text-light); margin-bottom: 1rem;">AIエージェントの実行プロセスを4ブロックで理解する</p>
+            <div class="flow-blocks">
+                <div class="flow-block fb-1">
+                    <div class="emoji">&#x1F9E0;</div>
+                    <h3>1. LLM</h3>
+                    <p>判断する・選択する<br><strong>脳</strong></p>
+                </div>
+                <div class="flow-block fb-2">
+                    <div class="emoji">&#x1F310;</div>
+                    <h3>2. MCP</h3>
+                    <p>つなぎ役・規格統一<br><strong>神経系・ハブ</strong></p>
+                </div>
+                <div class="flow-block fb-3">
+                    <div class="emoji">&#x1F4CB;</div>
+                    <h3>3. Function Calling</h3>
+                    <p>注文指令<br><strong>関数名と引数</strong></p>
+                </div>
+                <div class="flow-block fb-4">
+                    <div class="emoji">&#x2699;&#xFE0F;</div>
+                    <h3>4. Function</h3>
+                    <p>実体・タスク実行<br><strong>SQL, API, Code</strong></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MCP Stats -->
+    <section>
+        <h2>MCP 2026年4月の現状</h2>
+        <div class="stats">
+            <div class="stat">
+                <div class="number">9,700万</div>
+                <div class="label">月間SDK DL数</div>
+            </div>
+            <div class="stat">
+                <div class="number">5,000+</div>
+                <div class="label">利用可能サーバー</div>
+            </div>
+            <div class="stat">
+                <div class="number">5社</div>
+                <div class="label">主要AI企業が採用</div>
+            </div>
+            <div class="stat">
+                <div class="number">AAIF</div>
+                <div class="label">Linux Foundation管理</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Diagrams -->
+    <section>
+        <h2>アーキテクチャ図解</h2>
+        <div class="diagram-gallery">
+            <div class="diagram-item">
+                <img src="docs/diagrams/architecture/llm-mcp-fc-flow.png" alt="LLM MCP FC Flow" loading="lazy">
+                <div class="caption">
+                    LLM → MCP → FC → Function のシンプルな流れ
+                    <span>AIエージェントの実行プロセスをブロック単位で簡潔に説明</span>
+                </div>
+            </div>
+            <div class="diagram-item">
+                <img src="docs/diagrams/architecture/mcp-function-calling-architecture.png" alt="MCP FC Architecture" loading="lazy">
+                <div class="caption">
+                    MCPが支えるFunction Callingアーキテクチャ
+                    <span>エージェントホスト、MCPサーバー群、外部サービスの関係</span>
+                </div>
+            </div>
+            <div class="diagram-item">
+                <img src="docs/diagrams/architecture/fc-mcp-relationship.png" alt="FC MCP Relationship" loading="lazy">
+                <div class="caption">
+                    Function Calling と MCP の関係性
+                    <span>MCPはFunction Callingを簡単に使えるようにした規格統一パッケージ</span>
+                </div>
+            </div>
+            <div class="diagram-item">
+                <img src="docs/diagrams/architecture/ai-external-connectivity.png" alt="AI External Connectivity" loading="lazy">
+                <div class="caption">
+                    非エンジニア向け: AIが自律的に外部と連携する仕組み
+                    <span>メール、チャット、データベース、カレンダーなど外部サービスとの接続</span>
+                </div>
+            </div>
+            <div class="diagram-item">
+                <img src="docs/diagrams/architecture/mcp-server-generation-flow.png" alt="MCP Server Generation" loading="lazy">
+                <div class="caption">
+                    AIコーディングエージェントによるMCPサーバー自動生成フロー
+                    <span>システム情報読み込み → アーキテクチャ分析 → MCP定義変換 → 完成</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Concepts -->
+    <section>
+        <h2>概念理解</h2>
+        <div class="card-grid">
+            <div class="card">
+                <h3>01. LLMの基礎</h3>
+                <p>大規模言語モデル = AIエージェントの「脳」</p>
+                <ul>
+                    <li>ユーザーの意図を汲み取る</li>
+                    <li>どのツールを呼ぶか判断</li>
+                    <li>結果を解釈して次のアクションを決定</li>
+                </ul>
+            </div>
+            <div class="card card-green">
+                <h3>02. Function Calling</h3>
+                <p>LLMが外部機能を呼び出す万能インターフェース</p>
+                <ul>
+                    <li>関数名 + 引数をJSON形式で生成</li>
+                    <li>ホスト側が実際の関数を実行</li>
+                    <li>実行結果をLLMに返却</li>
+                </ul>
+            </div>
+            <div class="card card-purple">
+                <h3>03. MCP</h3>
+                <p>Function Callingの規格統一パッケージ</p>
+                <ul>
+                    <li>Tools / Resources / Prompts の3要素</li>
+                    <li>Plug&Playで疎結合に拡張</li>
+                    <li>OAuth 2.1 / Streamable HTTP</li>
+                </ul>
+            </div>
+            <div class="card card-orange">
+                <h3>04. エージェントパターン</h3>
+                <p>ReAct, Plan&Execute, Reflection等</p>
+                <ul>
+                    <li>シンプルなパターンから始める</li>
+                    <li>必要に応じて複雑さを増す</li>
+                    <li>Generator-Evaluator構造</li>
+                </ul>
+            </div>
+            <div class="card card-pink">
+                <h3>05. マルチエージェント</h3>
+                <p>複数エージェントの協調アーキテクチャ</p>
+                <ul>
+                    <li>Orchestrator-Workers</li>
+                    <li>Peer-to-Peer / Pipeline</li>
+                    <li>Agent Teams（Claude Code）</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Protocol Landscape -->
+    <section>
+        <h2>プロトコル全体像</h2>
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>項目</th>
+                    <th>MCP</th>
+                    <th>A2A</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>目的</strong></td>
+                    <td>エージェント ↔ ツール/データ接続</td>
+                    <td>エージェント ↔ エージェント協調</td>
+                </tr>
+                <tr>
+                    <td><strong>比喩</strong></td>
+                    <td>USB-Cポート（手を与える）</td>
+                    <td>チームワーク（協調を与える）</td>
+                </tr>
+                <tr>
+                    <td><strong>提唱者</strong></td>
+                    <td>Anthropic</td>
+                    <td>Google</td>
+                </tr>
+                <tr>
+                    <td><strong>成熟度</strong></td>
+                    <td>非常に高い（9,700万DL/月）</td>
+                    <td>成長中（v1.0 early 2026）</td>
+                </tr>
+                <tr>
+                    <td><strong>プロトコル</strong></td>
+                    <td>JSON-RPC 2.0</td>
+                    <td>gRPC, Agent Cards</td>
+                </tr>
+                <tr>
+                    <td><strong>関係</strong></td>
+                    <td colspan="2" style="text-align:center; font-weight:600; color: var(--primary);">補完関係 &mdash; 同じスタックの2つのレイヤー</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Best Practices -->
+    <section>
+        <h2>ベストプラクティス</h2>
+
+        <h3 style="margin-top:1.5rem; margin-bottom:0.5rem; color: var(--text-light);">Anthropicの設計哲学</h3>
+        <div class="bp-list">
+            <div class="bp-item">
+                <div class="bp-number">1</div>
+                <div class="bp-content">
+                    <h4>最もシンプルな解決策を最初に</h4>
+                    <p>必要な場合にのみ複雑さを増す。6つのComposableパターンを下から順に検討。</p>
+                </div>
+            </div>
+            <div class="bp-item">
+                <div class="bp-number">2</div>
+                <div class="bp-content">
+                    <h4>ハーネスが結果を決める</h4>
+                    <p>モデルの能力を引き出すのはハーネス（外枠）設計。Generator-Evaluator構造で品質を担保。</p>
+                </div>
+            </div>
+            <div class="bp-item">
+                <div class="bp-number">3</div>
+                <div class="bp-content">
+                    <h4>コンテキスト管理が最重要</h4>
+                    <p>エージェント開発で最も困難な問題。70-80%で品質劣化開始、最後の20%で80%のエラー発生。</p>
+                </div>
+            </div>
+        </div>
+
+        <h3 style="margin-top:2rem; margin-bottom:0.5rem; color: var(--text-light);">MCPサーバー設計</h3>
+        <div class="bp-list">
+            <div class="bp-item">
+                <div class="bp-number">4</div>
+                <div class="bp-content">
+                    <h4>1サーバー = 1責務</h4>
+                    <p>小さく焦点を絞ったサーバーを作る。動的ツールローディングでトークン消費を最適化。</p>
+                </div>
+            </div>
+            <div class="bp-item">
+                <div class="bp-number">5</div>
+                <div class="bp-content">
+                    <h4>最小権限 + OAuth 2.1</h4>
+                    <p>エージェントに必要な権限だけ付与。2026年の認証標準はOAuth 2.1。</p>
+                </div>
+            </div>
+            <div class="bp-item">
+                <div class="bp-number">6</div>
+                <div class="bp-content">
+                    <h4>Streamable HTTP + Blue-Green Deploy</h4>
+                    <p>本番はStreamable HTTPトランスポート。ゼロダウンタイム更新のためBlue-Greenデプロイ。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Links -->
+    <section>
+        <h2>参考資料</h2>
+        <div class="card-grid">
+            <div class="card">
+                <h3>公式ドキュメント</h3>
+                <ul>
+                    <li><a href="https://modelcontextprotocol.io/" target="_blank">MCP公式</a></li>
+                    <li><a href="https://docs.anthropic.com/en/docs/claude-code" target="_blank">Claude Code</a></li>
+                    <li><a href="https://docs.anthropic.com/" target="_blank">Anthropic API</a></li>
+                </ul>
+            </div>
+            <div class="card card-green">
+                <h3>Anthropic Engineering</h3>
+                <ul>
+                    <li><a href="https://www.anthropic.com/research/building-effective-agents" target="_blank">Building Effective Agents</a></li>
+                    <li><a href="https://www.anthropic.com/engineering/harness-design-long-running-apps" target="_blank">Harness Design</a></li>
+                    <li><a href="https://www.anthropic.com/engineering/multi-agent-research-system" target="_blank">Multi-Agent System</a></li>
+                </ul>
+            </div>
+            <div class="card card-purple">
+                <h3>SDK & サーバー</h3>
+                <ul>
+                    <li><a href="https://github.com/modelcontextprotocol/typescript-sdk" target="_blank">MCP TypeScript SDK</a></li>
+                    <li><a href="https://github.com/modelcontextprotocol/servers" target="_blank">MCP Servers公式リスト</a></li>
+                    <li><a href="https://github.com/punkpeye/awesome-mcp-servers" target="_blank">Awesome MCP Servers</a></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<footer>
+    <p>
+        <a href="https://github.com/yasushi-honda/ai-agent-understanding" target="_blank">GitHub Repository</a>
+        &nbsp;|&nbsp; Updated: 2026-04-04 &nbsp;|&nbsp; Built with Claude Code (Opus 4.6)
+    </p>
+</footer>
+
+</body>
+</html>
