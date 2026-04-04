@@ -2,6 +2,8 @@
 
 AIエージェントの研究・理解・実践を行うワークスペース。
 
+**Web版**: https://yasushi-honda.github.io/ai-agent-understanding/
+
 ## 構造
 
 ```
