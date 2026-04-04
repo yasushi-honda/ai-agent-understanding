@@ -776,7 +776,7 @@
                 <div class="flow-block fb-4">
                     <div class="emoji">&#x1F680;</div>
                     <h3>Phase 4</h3>
-                    <p>追加MCPサーバー実験<br><strong>マルチエージェント</strong></p>
+                    <p>4つのMCPサーバー<br><strong>GCP管理/コスト/更新/協調</strong></p>
                 </div>
             </div>
         </div>
@@ -843,6 +843,50 @@
                 </ul>
             </div>
         </div>
+
+        <h3 style="margin-top:2rem; margin-bottom:0.5rem; color: var(--text-light);">実装済みMCPサーバー</h3>
+        <div class="card-grid">
+            <div class="card">
+                <h3>knowledge-search</h3>
+                <p>知識ベース検索 + RAG回答生成。Gemini 2.5 Flash統合。Cloud Runデプロイ済み。</p>
+                <ul>
+                    <li>list_topics / search_docs / ask_question</li>
+                    <li>ステータス: 本番稼働中</li>
+                </ul>
+            </div>
+            <div class="card card-green">
+                <h3>gcp-resource-manager</h3>
+                <p>Cloud Run / GCSリソースの状態確認。読み取り専用。</p>
+                <ul>
+                    <li>5ツール（サービス一覧、バケット情報等）</li>
+                    <li>ステータス: 実験中</li>
+                </ul>
+            </div>
+            <div class="card card-orange">
+                <h3>cost-monitor</h3>
+                <p>GCPコスト監視・異常検知。Billing API + BigQuery。</p>
+                <ul>
+                    <li>4ツール（コスト集計、異常検知等）</li>
+                    <li>ステータス: 実験中</li>
+                </ul>
+            </div>
+            <div class="card card-purple">
+                <h3>doc-updater</h3>
+                <p>ドキュメント鮮度チェック・自動更新。Gemini + Google Search Grounding。</p>
+                <ul>
+                    <li>4ツール（鮮度チェック、Web検索、diff生成等）</li>
+                    <li>ステータス: 実験中</li>
+                </ul>
+            </div>
+            <div class="card card-pink">
+                <h3>multi-agent-coordinator</h3>
+                <p>マルチエージェント協調。A2A Agent Card模擬 + タスクオーケストレーション。</p>
+                <ul>
+                    <li>5ツール（エージェント一覧、タスク作成・実行等）</li>
+                    <li>ステータス: 実験中</li>
+                </ul>
+            </div>
+        </div>
     </section>
 
     <!-- Links -->
@@ -881,7 +925,7 @@
 <footer>
     <p>
         <a href="https://github.com/yasushi-honda/ai-agent-understanding" target="_blank">GitHub Repository</a>
-        &nbsp;|&nbsp; Updated: 2026-04-04 &nbsp;|&nbsp; Built with Claude Code (Opus 4.6)
+        &nbsp;|&nbsp; Updated: 2026-04-05 &nbsp;|&nbsp; Built with Claude Code (Opus 4.6)
     </p>
 </footer>
 

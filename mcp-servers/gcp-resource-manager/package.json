@@ -1,0 +1,22 @@
+{
+  "name": "gcp-resource-manager-mcp",
+  "version": "0.1.0",
+  "description": "GCPリソース管理MCPサーバー（読み取り専用・ADC認証）",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@google-cloud/run": "^1.4.0",
+    "@google-cloud/storage": "^7.0.0",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0",
+    "tsx": "^4.19.0"
+  }
+}
