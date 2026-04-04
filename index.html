@@ -750,6 +750,101 @@
         </div>
     </section>
 
+    <!-- Use Cases (#8) -->
+    <section>
+        <h2>利用実例</h2>
+
+        <h3 style="margin-top:1.5rem; margin-bottom:0.5rem; color: var(--text-light);">このサイトの構築過程</h3>
+        <div class="flow-section">
+            <p style="text-align:center; color: var(--text-light); margin-bottom: 1rem;">AIエージェント（Claude Code）が実際に構築した4フェーズ</p>
+            <div class="flow-blocks">
+                <div class="flow-block fb-1">
+                    <div class="emoji">&#x1F4DD;</div>
+                    <h3>Phase 1</h3>
+                    <p>GCPプロジェクト構築<br><strong>知識検索MCPサーバー</strong></p>
+                </div>
+                <div class="flow-block fb-2">
+                    <div class="emoji">&#x1F916;</div>
+                    <h3>Phase 2</h3>
+                    <p>Gemini 2.5 Flash統合<br><strong>RAG + /api/chat</strong></p>
+                </div>
+                <div class="flow-block fb-3">
+                    <div class="emoji">&#x1F5BC;&#xFE0F;</div>
+                    <h3>Phase 3a-b</h3>
+                    <p>Lightbox + チャットUI<br><strong>GitHub Pages統合</strong></p>
+                </div>
+                <div class="flow-block fb-4">
+                    <div class="emoji">&#x1F680;</div>
+                    <h3>Phase 4</h3>
+                    <p>追加MCPサーバー実験<br><strong>マルチエージェント</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <h3 style="margin-top:2rem; margin-bottom:0.5rem; color: var(--text-light);">MCPサーバー開発ステップ</h3>
+        <div class="bp-list">
+            <div class="bp-item">
+                <div class="bp-number" style="background: var(--accent-green);">1</div>
+                <div class="bp-content">
+                    <h4>スキーマ設計</h4>
+                    <p>MCPツールの名前・説明・入力パラメータをJSON Schemaで定義。LLMが理解しやすい説明文が鍵。</p>
+                </div>
+            </div>
+            <div class="bp-item">
+                <div class="bp-number" style="background: var(--accent-green);">2</div>
+                <div class="bp-content">
+                    <h4>サーバー実装</h4>
+                    <p>@modelcontextprotocol/sdk でサーバーを実装。stdio（ローカル）またはStreamable HTTP（本番）で起動。</p>
+                </div>
+            </div>
+            <div class="bp-item">
+                <div class="bp-number" style="background: var(--accent-green);">3</div>
+                <div class="bp-content">
+                    <h4>Claude Codeに接続</h4>
+                    <p>settings.json にMCPサーバーを登録。Claude Codeが自動的にツールを検出し、自然言語で呼び出し可能に。</p>
+                </div>
+            </div>
+            <div class="bp-item">
+                <div class="bp-number" style="background: var(--accent-green);">4</div>
+                <div class="bp-content">
+                    <h4>Cloud Runデプロイ</h4>
+                    <p>Dockerコンテナ化してCloud Runにデプロイ。min-instances=0でスケールtoゼロ、実質無料運用。</p>
+                </div>
+            </div>
+        </div>
+
+        <h3 style="margin-top:2rem; margin-bottom:0.5rem; color: var(--text-light);">業務活用例</h3>
+        <div class="card-grid">
+            <div class="card card-green">
+                <h3>RAG / 知識検索</h3>
+                <p>社内ドキュメントをベクトル化し、自然言語で検索。このサイトのチャット機能がまさにその実例。</p>
+                <ul>
+                    <li>Markdown → チャンク分割 → 埋め込み</li>
+                    <li>コサイン類似度で関連文書取得</li>
+                    <li>LLMが文脈付きで回答生成</li>
+                </ul>
+            </div>
+            <div class="card card-purple">
+                <h3>GCPリソース管理</h3>
+                <p>Cloud Run、GCS、BigQueryなどのGCPリソースを自然言語で操作。</p>
+                <ul>
+                    <li>「最近のデプロイ状況を確認して」</li>
+                    <li>「ストレージの使用量を教えて」</li>
+                    <li>「コスト異常があればアラート」</li>
+                </ul>
+            </div>
+            <div class="card card-orange">
+                <h3>ワークフロー自動化</h3>
+                <p>複数のツール・APIを組み合わせた自動化パイプライン。</p>
+                <ul>
+                    <li>GitHub Issue → 実装 → テスト → PR</li>
+                    <li>ドキュメント更新の自動検知・反映</li>
+                    <li>定期レポートの自動生成</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
     <!-- Links -->
     <section>
         <h2>参考資料</h2>
