@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIエージェント 初学者向けガイド</title>
+<style>
+  :root{
+    --primary:#2563eb; --primary-dark:#1d4ed8;
+    --bg:#f8fafc; --card:#fff; --text:#1e293b; --muted:#64748b; --border:#e2e8f0;
+    --green:#10b981; --purple:#8b5cf6; --orange:#f59e0b; --pink:#ec4899;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);line-height:1.8}
+  .hero{background:linear-gradient(135deg,#1e3a5f 0%,#2563eb 50%,#7c3aed 100%);color:#fff;padding:4rem 1.5rem 3rem;text-align:center}
+  .hero h1{font-size:2.4rem;font-weight:800;margin-bottom:.8rem}
+  .hero p{font-size:1.15rem;opacity:.92;max-width:720px;margin:0 auto}
+  .hero .back{display:inline-block;margin-top:1.5rem;padding:.5rem 1.2rem;background:rgba(255,255,255,.18);color:#fff;border-radius:24px;text-decoration:none;font-size:.9rem;backdrop-filter:blur(10px)}
+  .hero .back:hover{background:rgba(255,255,255,.28)}
+  .container{max-width:960px;margin:0 auto;padding:0 1.25rem}
+  .toc{background:#fff;border:1px solid var(--border);border-radius:14px;padding:1.5rem 1.75rem;margin:2.5rem 0;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+  .toc h2{font-size:1.1rem;color:var(--primary);margin-bottom:.75rem}
+  .toc ol{padding-left:1.25rem}
+  .toc li{margin:.35rem 0}
+  .toc a{color:var(--text);text-decoration:none;border-bottom:1px dashed #cbd5e1}
+  .toc a:hover{color:var(--primary)}
+  section.chapter{background:#fff;border-radius:16px;padding:2.25rem 2rem;margin:2rem 0;box-shadow:0 4px 20px rgba(0,0,0,.06);scroll-margin-top:1rem}
+  section.chapter h2{font-size:1.55rem;color:var(--primary);border-left:5px solid var(--primary);padding-left:.75rem;margin-bottom:1rem}
+  section.chapter h3{font-size:1.15rem;margin:1.25rem 0 .5rem;color:#334155}
+  section.chapter p{margin:.6rem 0;color:#334155}
+  section.chapter ul,section.chapter ol{margin:.4rem 0 .8rem 1.4rem;color:#334155}
+  section.chapter li{margin:.25rem 0}
+  .lead{font-size:1.05rem;background:#eff6ff;border-left:4px solid var(--primary);padding:.9rem 1.1rem;border-radius:8px;margin:1rem 0 1.2rem;color:#1e3a8a}
+  .analogy{background:#fef3c7;border:1px dashed #fbbf24;border-radius:10px;padding:.9rem 1.1rem;margin:1rem 0}
+  .analogy strong{color:#b45309}
+  .fig{margin:1.4rem 0;text-align:center}
+  .fig img{max-width:100%;height:auto;border:1px solid var(--border);border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.05);background:#fff}
+  .fig figcaption{font-size:.85rem;color:var(--muted);margin-top:.5rem}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin:1.2rem 0}
+  .card{border-radius:12px;padding:1.1rem .8rem;text-align:center;border:2px solid}
+  .card .e{font-size:2rem;display:block;margin-bottom:.3rem}
+  .card h4{font-size:1rem;margin:.2rem 0}
+  .card p{font-size:.8rem;color:#475569}
+  .c1{background:#eff6ff;border-color:#93c5fd}
+  .c2{background:#f0fdf4;border-color:#86efac}
+  .c3{background:#fef3c7;border-color:#fcd34d}
+  .c4{background:#faf5ff;border-color:#c4b5fd}
+  code{background:#f1f5f9;padding:.1rem .4rem;border-radius:4px;font-size:.9em;color:#be185d}
+  pre{background:#0f172a;color:#e2e8f0;padding:1rem 1.1rem;border-radius:10px;overflow-x:auto;font-size:.85rem;margin:.8rem 0}
+  table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+  th,td{border:1px solid var(--border);padding:.55rem .75rem;text-align:left}
+  th{background:#f1f5f9;color:#334155}
+  .tips{background:#ecfdf5;border-left:4px solid var(--green);padding:.9rem 1.1rem;border-radius:8px;margin:1rem 0;color:#065f46}
+  footer{text-align:center;padding:2.5rem 1rem;color:var(--muted);font-size:.85rem}
+  @media (max-width:720px){
+    .hero h1{font-size:1.7rem}
+    .grid4{grid-template-columns:repeat(2,1fr)}
+    section.chapter{padding:1.6rem 1.2rem}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>AIエージェント 初学者向けガイド</h1>
+  <p>「LLM・Function Calling・MCP・エージェントパターン」を、図と例えで一歩ずつ理解するページです。</p>
+  <a href="index.html" class="back">← トップページに戻る</a>
+</header>
+
+<div class="container">
+
+  <nav class="toc">
+    <h2>このページの目次</h2>
+    <ol>
+      <li><a href="#ch1">1. そもそも「AIエージェント」って何？</a></li>
+      <li><a href="#ch2">2. 脳になるLLM（大規模言語モデル）</a></li>
+      <li><a href="#ch3">3. 手足を動かすFunction Calling</a></li>
+      <li><a href="#ch4">4. 世界とつながるMCP</a></li>
+      <li><a href="#ch5">5. 全体像：LLM × MCP × Function Calling</a></li>
+      <li><a href="#ch6">6. エージェントの代表的な動き方</a></li>
+      <li><a href="#ch7">7. 複数のエージェントが協力する世界</a></li>
+      <li><a href="#ch8">8. 次に学ぶなら</a></li>
+    </ol>
+  </nav>
+
+  <!-- Chapter 1 -->
+  <section class="chapter" id="ch1">
+    <h2>1. そもそも「AIエージェント」って何？</h2>
+    <p class="lead">AIエージェントとは、<strong>自分で考え、必要な道具を選び、実際に行動してくれるAI</strong>のことです。</p>
+    <p>ChatGPTのような「質問に答えるAI」と違い、エージェントは「調べる」「ファイルを開く」「メールを送る」といった<strong>実行</strong>まで担当します。人間がいちいち手順を指示しなくても、ゴールを伝えれば自分で段取りしてくれます。</p>
+
+    <div class="analogy">
+      <strong>たとえると…</strong><br>
+      新人アシスタントに「経費精算をお願い」と頼む感じです。アシスタントは「領収書を探す → システムに入力 → 承認者に送る」という段取りを自分で考えて動きます。AIエージェントは、この“考えて動く”部分をLLMとツールで実現したものです。
+    </div>
+
+    <div class="grid4">
+      <div class="card c1"><span class="e">&#x1F9E0;</span><h4>LLM</h4><p>考える・判断する</p></div>
+      <div class="card c2"><span class="e">&#x1F310;</span><h4>MCP</h4><p>世界とつなぐ</p></div>
+      <div class="card c3"><span class="e">&#x1F4CB;</span><h4>Function Calling</h4><p>道具の注文票</p></div>
+      <div class="card c4"><span class="e">&#x2699;&#xFE0F;</span><h4>Tools</h4><p>実際に動く機能</p></div>
+    </div>
+    <p>この4つが組み合わさって、AIエージェントは「考えて→選んで→実行する」を繰り返します。</p>
+  </section>
+
+  <!-- Chapter 2 -->
+  <section class="chapter" id="ch2">
+    <h2>2. 脳になるLLM（大規模言語モデル）</h2>
+    <p class="lead">LLMはエージェントの<strong>脳</strong>。言葉を理解し、何をすべきか判断する部分です。</p>
+    <p>LLM（Large Language Model）は、膨大な文章を学習したAIモデルです。文章の意味を読み取り、次にどう動くべきかを言葉で考えられます。</p>
+    <h3>エージェントの中での役割</h3>
+    <ul>
+      <li>ユーザーの依頼を読み取る（意図の理解）</li>
+      <li>どの道具（Function/Tool）を使えばよいか選ぶ</li>
+      <li>道具の実行結果を読んで、次の一手を決める</li>
+      <li>最終的な答えを自然な日本語で返す</li>
+    </ul>
+    <h3>主なモデル（2026年4月時点）</h3>
+    <table>
+      <tr><th>提供元</th><th>モデル名</th><th>特徴</th></tr>
+      <tr><td>Anthropic</td><td>Claude Opus 4.6</td><td>深い推論・コーディングに強い</td></tr>
+      <tr><td>Anthropic</td><td>Claude Sonnet 4.6</td><td>速度と賢さのバランス型</td></tr>
+      <tr><td>OpenAI</td><td>GPT-5.2</td><td>汎用、広い用途に対応</td></tr>
+      <tr><td>Google</td><td>Gemini 2.5 Pro</td><td>画像・音声も扱えるマルチモーダル</td></tr>
+    </table>
+    <div class="analogy"><strong>イメージ：</strong>LLM単体はとても賢い“相談役”。ただし手足がないので、実際に何かを動かすには次章のFunction Callingが必要です。</div>
+  </section>
+
+  <!-- Chapter 3 -->
+  <section class="chapter" id="ch3">
+    <h2>3. 手足を動かすFunction Calling</h2>
+    <p class="lead">Function Callingは、LLMが<strong>外部の機能を呼び出すための「注文票」</strong>の仕組みです。</p>
+    <p>LLMはそのままでは文章しか返せません。そこで「この関数を、この引数で呼んでください」というJSON形式の<strong>注文票</strong>を出せるようにしたのがFunction Callingです。注文票を受け取ったホスト（エージェントの土台）が、実際に関数を実行し、結果をLLMに戻します。</p>
+
+    <h3>動きの流れ</h3>
+    <ol>
+      <li>ユーザーが自然言語で依頼する</li>
+      <li>LLMが「どの関数を呼ぶか」「引数は何か」を考える</li>
+      <li>関数名と引数をJSONで出力する（＝注文票）</li>
+      <li>ホストが実際にその関数を実行する</li>
+      <li>結果をLLMに渡し、LLMがユーザーに回答する</li>
+    </ol>
+
+    <h3>注文票の例</h3>
+<pre><code>{
+  "name": "calc_total",
+  "arguments": { "price": 1200, "quantity": 3 }
+}</code></pre>
+
+    <figure class="fig">
+      <img src="docs/diagrams/architecture/fc-mcp-relationship.png" alt="Function CallingとMCPの関係図">
+      <figcaption>図：Function Calling と MCP の関係</figcaption>
+    </figure>
+
+    <div class="analogy"><strong>たとえると…</strong>レストランでの<strong>注文伝票</strong>です。お客さん（LLM）は「これ食べたい」と書くだけで、実際に料理するのは厨房（実行環境）。LLMは調理方法を知らなくてよい、という分業がポイントです。</div>
+  </section>
+
+  <!-- Chapter 4 -->
+  <section class="chapter" id="ch4">
+    <h2>4. 世界とつながるMCP</h2>
+    <p class="lead">MCP（Model Context Protocol）は、<strong>AIと外部ツール・データを接続するための共通規格</strong>です。</p>
+    <p>Function Callingはとても便利ですが、ツールごとに呼び出し方を作り込む必要がありました。MCPは「AI ⇄ ツール」の間に<strong>共通のコンセント</strong>を用意し、どんなサービスでも同じ手順で接続できるようにしたものです。Anthropicが2024年に公開し、現在では多くのAIクライアントが対応しています。</p>
+
+    <figure class="fig">
+      <img src="docs/diagrams/architecture/mcp-function-calling-architecture.png" alt="MCPとFunction Callingのアーキテクチャ">
+      <figcaption>図：MCPサーバーがFunction Callingの窓口を統一する</figcaption>
+    </figure>
+
+    <h3>MCPサーバーが提供する3つのもの</h3>
+    <ul>
+      <li><strong>Tools</strong>：実行できる機能（例：メール送信、SQL実行）</li>
+      <li><strong>Resources</strong>：読み取れるデータ（例：ドキュメント、ファイル）</li>
+      <li><strong>Prompts</strong>：再利用できる指示テンプレート</li>
+    </ul>
+
+    <figure class="fig">
+      <img src="docs/diagrams/architecture/ai-external-connectivity.png" alt="AIと外部サービスの接続">
+      <figcaption>図：AIエージェントは、MCPを通じて様々な外部サービスと会話できる</figcaption>
+    </figure>
+
+    <div class="analogy"><strong>たとえると…</strong>世界共通の<strong>USB-Cコネクタ</strong>。以前はツールごとに違うケーブルが必要でしたが、MCPという共通規格ができたことで「差すだけで動く」世界になりました。</div>
+  </section>
+
+  <!-- Chapter 5 -->
+  <section class="chapter" id="ch5">
+    <h2>5. 全体像：LLM × MCP × Function Calling</h2>
+    <p class="lead">3つの要素は、次のような順番で連携します。</p>
+
+    <figure class="fig">
+      <img src="docs/diagrams/architecture/llm-mcp-fc-flow.png" alt="LLM→Function Calling→MCP→Toolの流れ">
+      <figcaption>図：ユーザーの依頼がLLM → Function Calling → MCP → ツールへ流れる様子</figcaption>
+    </figure>
+
+    <ol>
+      <li><strong>ユーザー</strong>が自然言語で依頼する</li>
+      <li><strong>LLM</strong>が「どの道具を使うか」を判断する</li>
+      <li>LLMが<strong>Function Calling</strong>の形式で注文票を出す</li>
+      <li><strong>MCPサーバー</strong>が注文票を受け取り、実際のツールを実行する</li>
+      <li>結果がLLMに戻り、LLMが自然な言葉で答える</li>
+    </ol>
+
+    <div class="tips">覚え方：<strong>LLMは「脳」、Function Callingは「注文票」、MCPは「配膳係」、Toolsは「厨房」。</strong></div>
+  </section>
+
+  <!-- Chapter 6 -->
+  <section class="chapter" id="ch6">
+    <h2>6. エージェントの代表的な動き方</h2>
+    <p class="lead">エージェントにはいくつかの“思考スタイル”があります。代表的な4つを紹介します。</p>
+
+    <h3>① ReAct（考える→動く→見る）</h3>
+    <p>最も基本のループ。「Thought（思考）→ Action（行動）→ Observation（観察）」を繰り返します。Claude Codeもこの形を基本にしています。</p>
+
+    <h3>② Plan &amp; Execute（計画してから実行）</h3>
+    <p>最初に大きな計画を立てて、順番に実行していくスタイル。複雑な作業や複数ステップのタスクに向きます。</p>
+
+    <h3>③ Tool Use Agent（道具選択型）</h3>
+    <p>使えるツール群の中から、状況に合わせて最適なものを選んで実行します。Claude CodeやChatGPTの「Tools」機能が該当します。</p>
+
+    <h3>④ Reflection / Self-Critique（自己評価型）</h3>
+    <p>自分の出力を別の視点で見直して改善します。Anthropicが推奨する<strong>Generator-Evaluator分離</strong>もこの考え方の一つです。</p>
+
+    <div class="analogy"><strong>たとえると…</strong>ReActは「動きながら考える人」、Plan &amp; Executeは「先に計画書を書く人」、Tool Useは「道具箱から最適なものを選ぶ職人」、Reflectionは「自分の作品を見直す作家」です。</div>
+  </section>
+
+  <!-- Chapter 7 -->
+  <section class="chapter" id="ch7">
+    <h2>7. 複数のエージェントが協力する世界</h2>
+    <p class="lead">一人のエージェントで足りないときは、<strong>複数のエージェントがチームを組んで</strong>作業します。これをマルチエージェントといいます。</p>
+
+    <h3>代表的な協調パターン</h3>
+    <ul>
+      <li><strong>Orchestrator-Worker</strong>：リーダーがタスクを分配し、複数ワーカーが並行作業（例：フロント担当・バックエンド担当・テスト担当）</li>
+      <li><strong>Peer-to-Peer</strong>：対等な立場のエージェント同士でやり取り</li>
+      <li><strong>Pipeline</strong>：工場のライン式にA→B→Cと順番に処理</li>
+    </ul>
+
+    <figure class="fig">
+      <img src="docs/diagrams/architecture/mcp-server-generation-flow.png" alt="MCPサーバー生成フロー">
+      <figcaption>図：MCPサーバーをエージェントが自動生成するフロー（応用例）</figcaption>
+    </figure>
+
+    <div class="tips">マルチエージェントのコツ：<strong>同じファイルを同時に触らない</strong>／<strong>結果は必ず検証する</strong>。人間のチーム運営と同じで、役割分担とレビューが大事です。</div>
+  </section>
+
+  <!-- Chapter 8 -->
+  <section class="chapter" id="ch8">
+    <h2>8. 次に学ぶなら</h2>
+    <p>このページで全体像がつかめたら、次は各要素を深掘りしてみましょう。</p>
+    <ul>
+      <li><a href="docs/concepts/01-llm-basics.md">01. LLMの基礎</a></li>
+      <li><a href="docs/concepts/02-function-calling.md">02. Function Calling</a></li>
+      <li><a href="docs/concepts/03-mcp.md">03. MCP</a></li>
+      <li><a href="docs/concepts/04-agent-patterns.md">04. エージェントパターン</a></li>
+      <li><a href="docs/concepts/05-multi-agent.md">05. マルチエージェント協調</a></li>
+    </ul>
+    <h3>公式リソース</h3>
+    <ul>
+      <li><a href="https://modelcontextprotocol.io/" target="_blank">Model Context Protocol 公式</a></li>
+      <li><a href="https://www.anthropic.com/research/building-effective-agents" target="_blank">Building Effective Agents（Anthropic）</a></li>
+      <li><a href="https://docs.anthropic.com/en/docs/claude-code" target="_blank">Claude Code ドキュメント</a></li>
+    </ul>
+  </section>
+
+</div>
+
+<footer>
+  &copy; AIエージェント理解 — 初学者向けガイド
+</footer>
+
+</body>
+</html>
